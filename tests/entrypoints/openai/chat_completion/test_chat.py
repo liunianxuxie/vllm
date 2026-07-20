@@ -973,6 +973,23 @@ async def test_chat_completion_n_equals_1(client: openai.AsyncOpenAI, model_name
 
 
 # Unit tests for n parameter in ChatCompletionRequest.to_sampling_params()
+def test_chat_completion_request_vllm_xargs_to_sampling_params():
+    slo_args = {"ttft_slo_ms": 15000, "tbt_slo_ms": 0}
+    request = ChatCompletionRequest(
+        model="test-model",
+        messages=[{"role": "user", "content": "Hello"}],
+        vllm_xargs=slo_args,
+        max_tokens=10,
+    )
+
+    sampling_params = request.to_sampling_params(
+        max_tokens=10,
+        default_sampling_params={},
+    )
+
+    assert sampling_params.extra_args == slo_args
+
+
 def test_chat_completion_request_n_parameter_to_sampling_params():
     """Test that n parameter is correctly passed to SamplingParams."""
     # Test with n=3

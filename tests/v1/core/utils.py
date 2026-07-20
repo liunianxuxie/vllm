@@ -15,6 +15,7 @@ from vllm.config import (
     SpeculativeConfig,
     VllmConfig,
 )
+from vllm.config.scheduler import SchedulerPolicy
 from vllm.multimodal.inputs import (
     MultiModalFeatureSpec,
     MultiModalKwargsItem,
@@ -65,6 +66,9 @@ def create_scheduler(
     ec_role: str | None = None,
     use_v2_model_runner: bool | None = None,
     kv_cache_spec: KVCacheSpec | None = None,
+    policy: SchedulerPolicy = "fcfs",
+    default_ttft_slo_ms: float = float("inf"),
+    default_tbt_slo_ms: float = float("inf"),
 ) -> Scheduler | AsyncScheduler:
     """Create scheduler under test.
 
@@ -97,6 +101,9 @@ def create_scheduler(
         enable_chunked_prefill=enable_chunked_prefill,
         async_scheduling=async_scheduling,
         is_encoder_decoder=model_config.is_encoder_decoder,
+        policy=policy,
+        default_ttft_slo_ms=default_ttft_slo_ms,
+        default_tbt_slo_ms=default_tbt_slo_ms,
         # Ensure admission/preemption mechanics are deterministic
         watermark=0.0,
     )

@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 logger = init_logger(__name__)
 
 RunnerType = Literal["generate", "pooling", "draft"]
-SchedulerPolicy = Literal["fcfs", "priority"]
+SchedulerPolicy = Literal["fcfs", "priority", "slo"]
 
 
 @config
@@ -55,7 +55,7 @@ class SchedulerConfig:
 
     max_num_scheduled_tokens: int | None = Field(default=None, ge=0)
     """Maximum number of tokens that the scheduler may issue in a single iteration.
-    
+
     This is usually equal to max_num_batched_tokens, but can be smaller in cases
     when the model might append tokens into the batch (such as speculative decoding).
     Defaults to max_num_batched_tokens."""
@@ -109,10 +109,23 @@ class SchedulerConfig:
     policy: SchedulerPolicy = "fcfs"
     """The scheduling policy to use:
 
-    - "fcfs" means first come first served, i.e. requests are handled in order 
+    - "fcfs" means first come first served, i.e. requests are handled in order
       of arrival.
     - "priority" means requests are handled based on given priority (lower
-      value means earlier handling) and time of arrival deciding any ties)."""
+      value means earlier handling) and time of arrival deciding any ties).
+    - "slo" means requests are scheduled by SLO urgency, prioritizing requests
+      closest to their TTFT/TBT deadlines."""
+
+    default_ttft_slo_ms: float = Field(default=float("inf"), gt=0.0)
+    """Default Time-To-First-Token SLO in milliseconds. Requests without
+    an explicit TTFT SLO use this value. inf means no TTFT constraint."""
+
+    default_tbt_slo_ms: float = Field(default=float("inf"), gt=0.0)
+    """Default Time-Between-Tokens SLO in milliseconds. Requests without
+    an explicit TBT SLO use this value. inf means no TBT constraint."""
+
+    slo_waiting_token_reserve_ratio: float = Field(default=0.10, ge=0.0, le=1.0)
+    """Max fraction of step token budget to reserve for urgent waiting prefills."""
 
     disable_chunked_mm_input: bool = False
     """If set to true and chunked prefill is enabled, we do not want to

@@ -40,6 +40,7 @@ class TestResponsesRequestSamplingParams:
 
     def test_extra_sampling_params(self):
         """Test extra sampling parameters are correctly mapped."""
+        slo_args = {"ttft_slo_ms": 15000, "tbt_slo_ms": 0}
         request = ResponsesRequest(
             model="test-model",
             input="test input",
@@ -47,7 +48,7 @@ class TestResponsesRequestSamplingParams:
             seed=42,
             stop=["END", "STOP"],
             ignore_eos=True,
-            vllm_xargs={"custom": "value"},
+            vllm_xargs=slo_args,
         )
 
         sampling_params = request.to_sampling_params(default_max_tokens=1000)
@@ -56,7 +57,7 @@ class TestResponsesRequestSamplingParams:
         assert sampling_params.seed == 42
         assert sampling_params.stop == ["END", "STOP"]
         assert sampling_params.ignore_eos is True
-        assert sampling_params.extra_args == {"custom": "value"}
+        assert sampling_params.extra_args == slo_args
 
     def test_stop_string_conversion(self):
         """Test that single stop string is converted to list."""

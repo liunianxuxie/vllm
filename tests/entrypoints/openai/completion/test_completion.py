@@ -790,6 +790,23 @@ async def test_invalid_grammar(client: openai.AsyncOpenAI, model_name: str):
 
 
 # Unit tests for bad_words in CompletionRequest.to_sampling_params()
+def test_completion_request_vllm_xargs_to_sampling_params():
+    slo_args = {"ttft_slo_ms": 15000, "tbt_slo_ms": 0}
+    request = CompletionRequest(
+        model="test-model",
+        prompt="Hello",
+        vllm_xargs=slo_args,
+        max_tokens=10,
+    )
+
+    sampling_params = request.to_sampling_params(
+        max_tokens=10,
+        default_sampling_params={},
+    )
+
+    assert sampling_params.extra_args == slo_args
+
+
 def test_completion_request_bad_words_to_sampling_params():
     """bad_words should be forwarded to SamplingParams (parity with chat)."""
     request = CompletionRequest(
