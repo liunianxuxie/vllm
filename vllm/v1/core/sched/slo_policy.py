@@ -26,7 +26,6 @@ def normalize_request_slo_ms(value: Any, default: float) -> float:
 
 def set_request_slo_constraints(request: Request, scheduler_config: Any) -> None:
     request.ttft_slo_ms = scheduler_config.default_ttft_slo_ms
-    request.tbt_slo_ms = scheduler_config.default_tbt_slo_ms
     if request.sampling_params is None or request.sampling_params.extra_args is None:
         return
 
@@ -36,13 +35,6 @@ def set_request_slo_constraints(request: Request, scheduler_config: Any) -> None
         request.ttft_slo_ms = normalize_request_slo_ms(
             ttft_slo_ms,
             request.ttft_slo_ms,
-        )
-
-    tbt_slo_ms = extra_args.get("tbt_slo_ms")
-    if tbt_slo_ms is not None:
-        request.tbt_slo_ms = normalize_request_slo_ms(
-            tbt_slo_ms,
-            request.tbt_slo_ms,
         )
 
 
@@ -59,10 +51,6 @@ def compute_slo_score(
             wait_time_ms = (now - request.arrival_time) * 1000
             if request.ttft_slo_ms < float("inf") and request.ttft_slo_ms > 0:
                 score += 200.0 * max(0.0, wait_time_ms / request.ttft_slo_ms)
-        elif request.last_token_ts is not None:
-            elapsed_ms = (now - request.last_token_ts) * 1000
-            if request.tbt_slo_ms < float("inf") and request.tbt_slo_ms > 0:
-                score += max(0.0, 100.0 * elapsed_ms / request.tbt_slo_ms)
 
         if (
             request.num_computed_tokens == 0

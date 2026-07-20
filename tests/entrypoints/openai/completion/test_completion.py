@@ -791,7 +791,7 @@ async def test_invalid_grammar(client: openai.AsyncOpenAI, model_name: str):
 
 # Unit tests for bad_words in CompletionRequest.to_sampling_params()
 def test_completion_request_vllm_xargs_to_sampling_params():
-    slo_args = {"ttft_slo_ms": 15000, "tbt_slo_ms": 0}
+    slo_args = {"ttft_slo_ms": 15000}
     request = CompletionRequest(
         model="test-model",
         prompt="Hello",

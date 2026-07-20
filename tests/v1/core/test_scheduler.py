@@ -183,33 +183,28 @@ def test_slo_scheduler_sets_default_constraints():
     scheduler = create_scheduler(
         policy="slo",
         default_ttft_slo_ms=1000.0,
-        default_tbt_slo_ms=200.0,
     )
     (request,) = create_requests(num_requests=1)
 
     scheduler.add_request(request)
 
     assert request.ttft_slo_ms == 1000.0
-    assert request.tbt_slo_ms == 200.0
 
 
 def test_slo_scheduler_uses_request_level_constraints():
     scheduler = create_scheduler(
         policy="slo",
         default_ttft_slo_ms=1000.0,
-        default_tbt_slo_ms=200.0,
     )
     (request,) = create_requests(num_requests=1)
     assert request.sampling_params is not None
     request.sampling_params.extra_args = {
         "ttft_slo_ms": 500.0,
-        "tbt_slo_ms": 50.0,
     }
 
     scheduler.add_request(request)
 
     assert request.ttft_slo_ms == 500.0
-    assert request.tbt_slo_ms == 50.0
 
 
 @pytest.mark.parametrize(
@@ -231,19 +226,16 @@ def test_slo_scheduler_treats_zero_request_constraint_as_disabled():
     scheduler = create_scheduler(
         policy="slo",
         default_ttft_slo_ms=1000.0,
-        default_tbt_slo_ms=200.0,
     )
     (request,) = create_requests(num_requests=1)
     assert request.sampling_params is not None
     request.sampling_params.extra_args = {
         "ttft_slo_ms": 0,
-        "tbt_slo_ms": 0,
     }
 
     scheduler.add_request(request)
 
     assert request.ttft_slo_ms == float("inf")
-    assert request.tbt_slo_ms == float("inf")
 
 
 def test_slo_scheduler_accepts_infinite_request_constraints():
@@ -252,13 +244,11 @@ def test_slo_scheduler_accepts_infinite_request_constraints():
     assert request.sampling_params is not None
     request.sampling_params.extra_args = {
         "ttft_slo_ms": float("inf"),
-        "tbt_slo_ms": float("inf"),
     }
 
     scheduler.add_request(request)
 
     assert request.ttft_slo_ms == float("inf")
-    assert request.tbt_slo_ms == float("inf")
 
 
 @pytest.mark.parametrize("invalid_slo_ms", [0, -1, float("nan"), float("-inf")])

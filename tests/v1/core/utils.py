@@ -68,7 +68,6 @@ def create_scheduler(
     kv_cache_spec: KVCacheSpec | None = None,
     policy: SchedulerPolicy = "fcfs",
     default_ttft_slo_ms: float = float("inf"),
-    default_tbt_slo_ms: float = float("inf"),
 ) -> Scheduler | AsyncScheduler:
     """Create scheduler under test.
 
@@ -103,7 +102,6 @@ def create_scheduler(
         is_encoder_decoder=model_config.is_encoder_decoder,
         policy=policy,
         default_ttft_slo_ms=default_ttft_slo_ms,
-        default_tbt_slo_ms=default_tbt_slo_ms,
         # Ensure admission/preemption mechanics are deterministic
         watermark=0.0,
     )

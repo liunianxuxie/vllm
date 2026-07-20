@@ -40,7 +40,7 @@ class TestResponsesRequestSamplingParams:
 
     def test_extra_sampling_params(self):
         """Test extra sampling parameters are correctly mapped."""
-        slo_args = {"ttft_slo_ms": 15000, "tbt_slo_ms": 0}
+        slo_args = {"ttft_slo_ms": 15000}
         request = ResponsesRequest(
             model="test-model",
             input="test input",

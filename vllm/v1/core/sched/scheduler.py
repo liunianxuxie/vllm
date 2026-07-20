@@ -2113,7 +2113,6 @@ class Scheduler(SchedulerInterface):
             now = time.time()
             if request.first_token_ts is None:
                 request.first_token_ts = now
-            request.last_token_ts = now
             request.append_output_token_ids(output_token_id)
 
             # Check for stop and update request state.

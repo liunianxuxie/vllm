@@ -114,15 +114,11 @@ class SchedulerConfig:
     - "priority" means requests are handled based on given priority (lower
       value means earlier handling) and time of arrival deciding any ties).
     - "slo" means requests are scheduled by SLO urgency, prioritizing requests
-      closest to their TTFT/TBT deadlines."""
+      closest to their TTFT deadlines."""
 
     default_ttft_slo_ms: float = Field(default=float("inf"), gt=0.0)
     """Default Time-To-First-Token SLO in milliseconds. Requests without
     an explicit TTFT SLO use this value. inf means no TTFT constraint."""
-
-    default_tbt_slo_ms: float = Field(default=float("inf"), gt=0.0)
-    """Default Time-Between-Tokens SLO in milliseconds. Requests without
-    an explicit TBT SLO use this value. inf means no TBT constraint."""
 
     slo_waiting_token_reserve_ratio: float = Field(default=0.10, ge=0.0, le=1.0)
     """Max fraction of step token budget to reserve for urgent waiting prefills."""

@@ -607,8 +607,6 @@ def test_slo_scheduler_cli_args_flow_to_scheduler_config():
             "slo",
             "--default-ttft-slo-ms",
             "15000",
-            "--default-tbt-slo-ms",
-            "250",
             "--slo-waiting-token-reserve-ratio",
             "0.2",
         ]
@@ -616,13 +614,11 @@ def test_slo_scheduler_cli_args_flow_to_scheduler_config():
     engine_args = EngineArgs.from_cli_args(args)
 
     assert engine_args.default_ttft_slo_ms == 15000.0
-    assert engine_args.default_tbt_slo_ms == 250.0
     assert engine_args.slo_waiting_token_reserve_ratio == 0.2
 
     scheduler_config = engine_args.create_engine_config().scheduler_config
     assert scheduler_config.policy == "slo"
     assert scheduler_config.default_ttft_slo_ms == 15000.0
-    assert scheduler_config.default_tbt_slo_ms == 250.0
     assert scheduler_config.slo_waiting_token_reserve_ratio == 0.2
 
 

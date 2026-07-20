@@ -94,10 +94,8 @@ class Request:
             )
         self.arrival_time = arrival_time if arrival_time is not None else time.time()
         self.ttft_slo_ms: float = float("inf")
-        self.tbt_slo_ms: float = float("inf")
         self.slo_urgency_score: float = 0.0
         self.first_token_ts: float | None = None
-        self.last_token_ts: float | None = None
 
         self.status = RequestStatus.WAITING
         self.events: list[EngineCoreEvent] = []
